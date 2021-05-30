@@ -17,6 +17,9 @@ Every time you update or fetch document, the action will be loaded in the consol
 
 ## Run the app
 
+You'll need to have MetaMask or any equivalent software wallet extension installed in browser before running the app.
+It must be connected to Ethereum mainnet network.
+
 `yarn start`
 
 ## License
