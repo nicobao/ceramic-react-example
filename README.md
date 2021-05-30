@@ -1,6 +1,6 @@
 # Working example Ceramic + React + Typescript
 
-This is a basic example of how to have basic interaction with Ceramic Network Testnet (https://ceramic-clay.3boxlabs.com).
+This is an example showing how to have basic interaction with Ceramic Network Testnet (https://ceramic-clay.3boxlabs.com).
 
 This React app allows you to:
 
