@@ -4,6 +4,8 @@ import CeramicClient from "@ceramicnetwork/http-client";
 import { ThreeIdConnect, EthereumAuthProvider } from "@3id/connect";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
 import { DID } from "dids";
+import { CommitID } from "@ceramicnetwork/streamid";
+import { MultiQuery, Stream } from "@ceramicnetwork/common";
 
 declare let window: any;
 
@@ -61,4 +63,16 @@ export const updateDoc = async (
   newContent: any
 ) => {
   return await document.update(newContent);
+};
+
+export const loadAllCommits = async (
+  ceramic: CeramicClient,
+  doc: TileDocument<any>
+): Promise<Record<string, Stream>> => {
+  const reducer = (acc: Array<MultiQuery>, currentElem: CommitID) => {
+    acc.push({ streamId: currentElem.toUrl() });
+    return acc;
+  };
+  const queries = doc.allCommitIds.reduce(reducer, []);
+  return await ceramic.multiQuery(queries);
 };

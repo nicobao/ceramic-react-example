@@ -1,14 +1,21 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { authenticate, createOrGetDoc, updateDoc } from "./_services/ceramic";
+import {
+  authenticate,
+  createOrGetDoc,
+  loadAllCommits,
+  updateDoc,
+} from "./_services/ceramic";
 import CeramicClient from "@ceramicnetwork/http-client";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
+import { Stream } from "@ceramicnetwork/common";
 
 function App() {
   const [ceramic, setCeramic] = React.useState<CeramicClient | null>(null);
   const [content, setContent] = React.useState<string>("");
   const [doc, setDoc] = React.useState<TileDocument<any> | null>(null);
+  const [logs, setLogs] = React.useState<string[]>([]);
 
   React.useEffect(() => {
     loadDoc(ceramic);
@@ -43,7 +50,21 @@ function App() {
   }
 
   function loadDocument() {
-    loadDoc(ceramic);
+    if (
+      ceramic !== null &&
+      ceramic !== undefined &&
+      doc !== null &&
+      doc !== undefined
+    ) {
+      loadAllCommits(ceramic, doc)
+        .then((streamMap: Record<string, Stream>) => {
+          const newLogs = Object.values(streamMap).map(
+            (value) => value.state.content
+          );
+          setLogs(newLogs);
+        })
+        .catch((e) => console.log("Error while querying the document", e));
+    }
   }
 
   return (
@@ -66,6 +87,7 @@ function App() {
         <button disabled={ceramic === null} onClick={loadDocument}>
           Load document
         </button>
+        <textarea readOnly value={logs.join("\n")} />
       </header>
     </div>
   );
